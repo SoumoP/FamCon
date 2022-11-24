@@ -6,7 +6,7 @@ import { getFirestore, setDoc, doc, getDoc } from 'firebase/firestore';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged} from 'firebase/auth';
 
 const firebaseConfig = {
-  // **ENTER FIREBASE PROJECT DETAILS HERE**    
+  
 };
 initializeApp(firebaseConfig);
 const auth = getAuth();
@@ -18,6 +18,7 @@ const SignupScreen=() => {
     const [password, setPassword] = useState("");
     const [famemail, setFamemail] = useState("");
     const [famname, setFamname] = useState("");
+    const [mob, setMob] = useState("");
 
     const navigation = useNavigation();
     useEffect(()=>{
@@ -44,6 +45,7 @@ const SignupScreen=() => {
           email: email,
           famname: famname,
           famemail: famemail,
+          mob: mob,
           danger: 0,
       };
       setDoc(docRef, locationInfo);
@@ -83,6 +85,14 @@ const SignupScreen=() => {
           value={famemail}
           placeholder="Family Email"
           keyboardType="email-address"
+        />
+
+        <TextInput
+          style={styles.input}
+          onChangeText={text=>setMob(text)}
+          value={mob}
+          placeholder="Family Mobile No."
+          keyboardType="number-pad"
         />
   
         <TextInput
@@ -138,6 +148,7 @@ const SignupScreen=() => {
       fontFamily: 'sans-serif-medium',
       fontSize:25,
       fontWeight:'bold',
+      paddingBottom: 30,
   },
 
   button: {

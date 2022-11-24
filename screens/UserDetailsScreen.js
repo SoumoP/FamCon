@@ -11,7 +11,7 @@ import SignupScreen from './SignupScreen'
 
 const firestore = getFirestore();
 const firebaseConfig = {
-  // **ENTER FIREBASE PROJECT DETAILS HERE**    
+  
 };
 initializeApp(firebaseConfig);
 const auth = getAuth();
@@ -19,7 +19,7 @@ const auth = getAuth();
 
 const UserDetailsScreen = () =>{
     const [famname, setFamname] = useState("");
-    const [mobile, setMobile] = useState("");
+    const [mob, setMob] = useState("");
     const [family, setFamily] = useState("")
     const navigation = useNavigation();
     const user = auth.currentUser;
@@ -31,6 +31,7 @@ const UserDetailsScreen = () =>{
         const userInfo = {
           famname: famname,
           famemail: family,
+          mob: mob,
         };
         updateDoc(docRef, userInfo);
         console.log("User Info Updated");
@@ -59,6 +60,15 @@ const UserDetailsScreen = () =>{
           value={famname}
           placeholder="Family Member Name"
           keyboardType="default"
+        /> 
+        <TextInput
+          style={styles.input}
+          onChangeText={
+            text=>setMob(text)
+          }
+          value={mob}
+          placeholder="Mobile No."
+          keyboardType="number-pad"
         /> 
         <View style={{flexDirection:'row'}}>
         <Pressable

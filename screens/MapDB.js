@@ -9,7 +9,7 @@ import { getFirestore, doc, getDoc } from 'firebase/firestore';
 
 
 const firebaseConfig = {
-  // **ENTER FIREBASE PROJECT DETAILS HERE**    
+  
 };
 initializeApp(firebaseConfig);
 const auth = getAuth();
@@ -25,10 +25,14 @@ const MapDB = ()=> {
     const [famname, setFamname] = useState("")
     const [lat, setLat] = useState(11)
     const [long, setLong] = useState(22)
+    const [markerlat, setMarkerlat] = useState(11)
+    const [markerlong, setMarkerlong] = useState(22)
     const [latdel, setLatdel] = useState(0.05)
     const [longdel, setLongdel] = useState(0.05)
     const [mylat, setMylat] = useState(11)
     const [mylong, setMylong] = useState(22)
+    const [famlat, setFamlat] = useState(11)
+    const [famlong, setFamlong] = useState(22)
     
     
     useEffect(()=>{
@@ -59,6 +63,10 @@ const MapDB = ()=> {
         if (docSnap.exists()) {
           setLat ( parseFloat(docSnap.data().latitude));
           setLong ( parseFloat(docSnap.data().longitude)); 
+          setMarkerlat(mylat);
+          setMarkerlong(mylong);
+          setFamlat(parseFloat(docSnap.data().latitude));
+          setFamlong(parseFloat(docSnap.data().longitude));
           setFamname (docSnap.data().name.split(" ")[0]);
         } else {
           console.log("No such coords!");
@@ -70,7 +78,9 @@ const MapDB = ()=> {
       const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           setLat ( parseFloat(docSnap.data().latitude));
-          setLong ( parseFloat(docSnap.data().longitude)); 
+          setLong ( parseFloat(docSnap.data().longitude));
+          setMarkerlat(parseFloat(docSnap.data().latitude));
+          setMarkerlong(parseFloat(docSnap.data().longitude)); 
           setMylat ( parseFloat(docSnap.data().latitude));
           setMylong ( parseFloat(docSnap.data().longitude)); 
           setFamname(docSnap.data().name.split(" ")[0])
@@ -116,12 +126,38 @@ const MapDB = ()=> {
         "lat": "22.476446595881963",
         "lng": "88.39582690480103",
         "location": "Panchasayar Police Station"
-      }]; 
+      },
+      {
+        "code": "0004",
+        "lat": "22.476198514896655",
+        "lng": "88.39589061504577",
+        "location": "Panchasayar Police Station"
+      },
+      {
+        "code": "0005",
+        "lat": "22.49301139475855",
+        "lng": "88.40043964156652",
+        "location": "Purba Jadavpur Police Station"
+      },
+      {
+        "code": "0006",
+        "lat": "22.47493756501939",
+        "lng": "88.35751204697763",
+        "location": "Haridevpur Police Station"
+      },
+      {
+        "code": "0007",
+        "lat": "22.47497722080109",
+        "lng": "88.35716872422135",
+        "location": "Bansdhroni Police Station"
+      },
+    ]; 
 
       let minDist = distance(mylat, mylong, data[0].lat, data[0].lng, "K");
       let minLocation = data[0].location;
       let minLat = data[0].lat;
       let minLong = data[0].lng;
+      let minName = data[0].location;
       for (var i = 0; i < data.length; i++) {
         let dist = distance(mylat, mylong, data[i].lat, data[i].lng, "K");  
         if ( dist < minDist) {
@@ -129,13 +165,82 @@ const MapDB = ()=> {
               minLocation = data[i].location;
               minLat = data[i].lat;
               minLong = data[i].lng;
+              minName = data[i].location;
         }
     }
     setLat(parseFloat(minLat));
     setLong(parseFloat(minLong));
-    setFamname("Nearest Police Station");
+    setFamname(minName);
+    setMarkerlat(mylat);
+    setMarkerlong(mylong);
     //console.log(minLocation);
   }
+
+  const findNearestToFam = () => {
+    var data = [{
+      "code": "0001",
+      "lat": "22.50376568739723",
+      "lng": "88.3676901",
+      "location": "Jadavpur Police Station"
+    }, {
+      "code": "0002",
+      "lat": "22.484932581873178",
+      "lng": "88.38930377243166",
+      "location": "Survey Park Police Station"
+    }, {
+      "code": "0003",
+      "lat": "22.476446595881963",
+      "lng": "88.39582690480103",
+      "location": "Panchasayar Police Station"
+    },
+    {
+      "code": "0004",
+      "lat": "22.476198514896655",
+      "lng": "88.39589061504577",
+      "location": "Panchasayar Police Station"
+    },
+    {
+      "code": "0005",
+      "lat": "22.49301139475855",
+      "lng": "88.40043964156652",
+      "location": "Purba Jadavpur Police Station"
+    },
+    {
+      "code": "0006",
+      "lat": "22.47493756501939",
+      "lng": "88.35751204697763",
+      "location": "Haridevpur Police Station"
+    },
+    {
+      "code": "0007",
+      "lat": "22.47497722080109",
+      "lng": "88.35716872422135",
+      "location": "Bansdhroni Police Station"
+    },
+  ]; 
+
+    let minDist = distance(mylat, mylong, data[0].lat, data[0].lng, "K");
+    let minLocation = data[0].location;
+    let minLat = data[0].lat;
+    let minLong = data[0].lng;
+    let minName = data[0].location;
+    for (var i = 0; i < data.length; i++) {
+      let dist = distance(famlat, famlong, data[i].lat, data[i].lng, "K");  
+      if ( dist < minDist) {
+            minDist = dist;
+            minLocation = data[i].location;
+            minLat = data[i].lat;
+            minLong = data[i].lng;
+            minName = data[i].location;
+      }
+  }
+  setLat(parseFloat(minLat));
+  setLong(parseFloat(minLong));
+  setMarkerlat(famlat)
+  setMarkerlong(famlong)
+  setFamname(minName);
+  //console.log(minLocation);
+}
 
 
 
@@ -170,7 +275,7 @@ const MapDB = ()=> {
                 key='marker1' 
                 coordinate={{latitude:  lat, longitude: long}}
                 identifier={'mk1'}
-                pinColor="tomato"
+        
                 
               >
                 <Image 
@@ -181,10 +286,9 @@ const MapDB = ()=> {
              </Marker>
              <Marker 
                 key='marker2' 
-                coordinate={{latitude:  mylat, longitude: mylong}}
+                coordinate={{latitude:  markerlat, longitude: markerlong}}
                 identifier={'mk2'}
-                pinColor="green"
-                title='You'
+        
                 >
                 <Image 
                   source={require("../assets/user.png")}
@@ -195,7 +299,7 @@ const MapDB = ()=> {
               <Polyline
               coordinates={[
                 { latitude: lat, longitude: long },
-                { latitude: mylat, longitude: mylong },
+                { latitude: markerlat, longitude: markerlong },
               ]} 
               strokeWidth= {3}
               strokeColor='brown'
@@ -223,7 +327,13 @@ const MapDB = ()=> {
                 style={[styles.button]}
                 onPress={findNearest}
                 android_ripple={{color: 'white', borderless: false}}>
-                <Text style={styles.buttonText}>Police</Text>
+                <Text style={styles.buttonText}>Police 1</Text>
+            </Pressable>
+            <Pressable
+                style={[styles.button]}
+                onPress={findNearestToFam}
+                android_ripple={{color: 'white', borderless: false}}>
+                <Text style={styles.buttonText}>Police 2</Text>
             </Pressable>
           </View>
         </View> 

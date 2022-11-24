@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import { Platform, StatusBar } from "react-native";
 import { View, Image, Alert,Dimensions, SafeAreaView, KeyboardAvoidingView, Button, Pressable,Text,TextInput, StyleSheet } from 'react-native';
 import {useNavigation } from '@react-navigation/native';
 import Constants from 'expo-constants';
@@ -16,7 +17,7 @@ import * as SMS from 'expo-sms';
 
 const firestore = getFirestore();
 const firebaseConfig = {
-    // **ENTER FIREBASE PROJECT DETAILS HERE**    
+    
   };
 initializeApp(firebaseConfig);
 const auth = getAuth();
@@ -37,9 +38,9 @@ const LocDB = ({props}) =>{
     const [famemail, setFamemail] = useState("")
     const [snap, setSnap] = useState(false);
     const [message, setMessage] = useState("No Danger");
-    const [recipients, setRecipients] = useState(['8617583807']);
+    const [recipients, setRecipients] = useState(["1"]);
     const [sms, setSms] = useState("Your family member sent a SOS alert!\nOpen FamCon for more details.");
-
+    
 
     useEffect(()=>{
         const NameFetch= async()=>
@@ -49,6 +50,9 @@ const LocDB = ({props}) =>{
                 setUserName ( docSnap.data().name);
                 setFamname ( docSnap.data().famname);   
                 setFamemail ( docSnap.data().famemail); 
+                setRecipients([docSnap.data().mob]);
+                setSms("Your family member " + docSnap.data().name + " sent a SOS alert!\nOpen FamCon for more details.")
+                //console.log(recipients);
             } else {
             console.log(path);
             }
@@ -90,6 +94,8 @@ const LocDB = ({props}) =>{
       }
 
     // Update User Details   Try diff functions, use hooks to store the lat and long
+    // fetch coordinates using location api
+    // upload the coordinates to firestore
     const storeLocation = async () => {        
         if (Platform.OS === 'android' && !Constants.isDevice) {
             setErrorMsg(
@@ -223,7 +229,7 @@ return (
     <KeyboardAvoidingView style={styles.centeredView}>
     <View style={styles.headingCont1}>
         <Text style={styles.heading1}>FamCon</Text>
-        <Text style={styles.heading2}>Stay connected to your family</Text>
+        <Text style={styles.heading2}>Stay Connected To Your Family</Text>
         
     </View>
     <Pressable
@@ -251,7 +257,7 @@ return (
     
 
     <View style={{flex:9, width: Dimensions.get('window').width,backgroundColor:'white',alignItems:'center', justifyContent:'center'}}>
-        <Text style={{fontSize:20,}}>{snap.danger}</Text>
+        {/* <Text style={{fontSize:20,}}>{snap.danger}</Text> */}
         {/* <Image
             style={styles.logo}
             source={require('../assets/userIcon.png')}
@@ -287,7 +293,7 @@ const styles = StyleSheet.create({
       flex: 1,
       justifyContent: "center",
       alignItems:'center',
-      paddingTop: 50,
+      paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
       backgroundColor: 'white',
       flexDirection:"column" 
     },
@@ -349,16 +355,16 @@ const styles = StyleSheet.create({
         
     },
     headingCont2:{
-        padding:10,
+        padding:5,
         justifyContent:'center',
         flexDirection:'row',
     },
-    logo:{
-        alignItems:'center',
-        justifyContent:'center',
-        height:30,
-        width:30,
-    },
+    // logo:{
+    //     alignItems:'center',
+    //     justifyContent:'center',
+    //     height:30,
+    //     width:30,
+    // },
     
     button: {
       flex:1,
@@ -372,7 +378,7 @@ const styles = StyleSheet.create({
     },   
     button2: {
         borderRadius: 10,
-        margin: 10,
+        margin: 5,
         width:80,
         height: 30,
         justifyContent:'center',
